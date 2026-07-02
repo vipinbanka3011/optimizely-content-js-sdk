@@ -459,7 +459,6 @@ const MyContentType = contentType({
 // - description: "Description" (from Contract1)
 ```
 
-
 #### Using Contracts in Content Relationships
 
 Contracts can be used in `allowedTypes` and `restrictedTypes` to allow or restrict all content types that extend a specific contract:
@@ -505,6 +504,49 @@ const FeedPageContentType = contentType({
 ```
 
 This is particularly useful when you want to allow multiple content types that share common characteristics without listing each type individually.
+
+### Rendering Contract-Based Content
+
+When rendering content that implements a contract (e.g., in arrays of mixed types), use `<OptimizelyComponent>` to automatically resolve and render the correct component:
+
+```tsx
+import { OptimizelyComponent } from '@optimizely/cms-sdk/react/server';
+
+function FeedPage({ content }) {
+  return (
+    <div>
+      {content.featuredItems?.map((item, index) => (
+        <OptimizelyComponent key={index} content={item} />
+      ))}
+    </div>
+  );
+}
+```
+
+`OptimizelyComponent` inspects each content item's type and renders the registered component. If `featuredItems` allows `[PublishableContract]`, it renders any content type extending that contract (`ArticleContentType`, `NewsContentType`, etc.) using their respective components.
+
+**Using the `tag` parameter:** Override component lookup to render alternate versions of the same content type:
+
+```tsx
+<OptimizelyComponent content={item} tag="card" />
+```
+
+The `tag` parameter forces component lookup by tag instead of typename. Register tagged variants in your component registry:
+
+```tsx
+initReactComponentRegistry({
+  resolver: {
+    Article: ArticlePage,       // Default full-page renderer
+    'Article:card': ArticleCard, // Compact card view for lists
+    News: NewsPage,
+    'News:card': NewsCard,
+  },
+});
+```
+
+When `tag="card"` is passed, the component registry looks for `Article:card` first, falling back to `Article` if not found. Use this for card/list views, simplified teasers, or context-specific rendering of the same content type.
+
+For details on component registration and rendering, see [Rendering](./6-rendering-react.md).
 
 ## Step 2. Sync content types to the CMS
 
