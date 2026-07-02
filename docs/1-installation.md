@@ -61,6 +61,23 @@ And select the following prompts:
 npm install @optimizely/cms-sdk
 ```
 
+## Alternative: Use Example Templates
+
+Instead of starting from scratch, explore production-ready templates with best practices:
+
+**Stride Template**
+
+- Live demo: <https://nextjs-sample-js-sdk.vercel.app/>
+- Source: `templates/stride/` in SDK repository
+- Includes: Experiences (Composition), Live Preview, Display Templates
+
+**Alloy Template**
+
+- Source: `templates/alloy/` in SDK repository
+- Includes: Content Types, Contracts, Experiences (Composition), Display Templates, DAM assets, Live Preview
+
+Both templates demonstrate SDK patterns and serve as reference implementations.
+
 ## Next steps
 
 Now, you are ready to [set up the CLI](./2-setup.md)

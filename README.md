@@ -85,6 +85,27 @@ npm install -D @optimizely/cms-cli
 
 For a complete walkthrough from scratch, see the [Documentation](#documentation) section below.
 
+## Example Templates
+
+Reference implementations demonstrating best practices:
+
+### 🎨 Stride Template
+
+Production-ready Next.js site showcasing advanced patterns and features.
+
+- **Live Demo:** <https://nextjs-sample-js-sdk.vercel.app/>
+- **Source:** [`templates/stride/`](./templates/stride/)
+- **Features:** Experiences (Composition), Live Preview, Display Templates
+
+### 🏗️ Alloy Template
+
+Starter template with essential features and clean architecture.
+
+- **Source:** [`templates/alloy/`](./templates/alloy/)
+- **Features:** Content Types, Contracts, Experiences (Composition), Display Templates, DAM assets, Live Preview
+
+Both templates follow SDK best practices and serve as learning resources.
+
 ## Observability
 
 The SDK includes built-in OpenTelemetry instrumentation for production observability. All major operations are automatically traced, including GraphQL queries, content fetching, and component resolution.
