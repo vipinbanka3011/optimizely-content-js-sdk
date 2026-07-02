@@ -110,6 +110,37 @@ properties: {
 
 Both `minimum` and `maximum` accept ISO date-time strings.
 
+#### RichText Property
+
+For formatted content with rich text editing. Supports optional `editorSettings` to customize the TinyMCE toolbar:
+
+```ts
+properties: {
+  body: {
+    type: 'richText',
+    displayName: 'Article Body',
+    description: 'Main content with rich text formatting',
+  },
+  summary: {
+    type: 'richText',
+    displayName: 'Summary',
+    editorSettings: {
+      preset: 'minimal', // Options: 'minimal' | 'standard' | 'expanded'
+    },
+  },
+}
+```
+
+**Editor Presets:**
+
+- **`minimal`** - Basic formatting only (bold, italic, links, lists)
+- **`standard`** - Common formatting options (default if not specified)
+- **`expanded`** - Full TinyMCE toolbar with advanced features (tables, media, code)
+
+Use `minimal` for short formatted text fields like summaries or introductions. Use `expanded` for complex content requiring tables, embedded media, or custom HTML.
+
+**Rendering:** Use the `<RichText>` component from `@optimizely/cms-sdk/react/richText` to render rich text content. See [RichText Component](./10-richtext-component-react.md) for details.
+
 #### Array Property
 
 For storing lists of values. The `items` field defines what type each array element should be:
