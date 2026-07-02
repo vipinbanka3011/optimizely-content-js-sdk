@@ -1,6 +1,6 @@
 # Observability with OpenTelemetry
 
-The Optimizely CMS SDK includes built-in OpenTelemetry instrumentation for comprehensive observability in production applications.
+The Optimizely CMS SDK includes built-in OpenTelemetry instrumentation for production observability.
 
 ## Overview
 

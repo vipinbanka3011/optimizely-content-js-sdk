@@ -42,7 +42,7 @@ const c = await client.getContentByPath(`/<SOME_URL>`);
 
 ## Documentation
 
-For comprehensive guides and documentation, visit the main repository:
+Full guides and documentation in the main repository:
 
 ### Getting Started
 

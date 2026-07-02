@@ -270,7 +270,7 @@ export const ArticleDisplayTemplateDT = displayTemplate({
 
 ## Documentation
 
-For comprehensive guides and best practices:
+Guides and best practices:
 
 ### Getting Started
 

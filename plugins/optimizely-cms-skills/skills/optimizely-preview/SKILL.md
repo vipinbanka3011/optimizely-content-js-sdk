@@ -315,7 +315,7 @@ Then use `https://localhost:3000/preview` in your CMS preview URL configuration.
 
 ## Troubleshooting
 
-When preview isn't working, systematically check common issues: blank screens, missing preview button, preview not updating, 404 errors, and environment variable issues. See `references/troubleshooting.md` for comprehensive diagnostic steps and solutions.
+When preview isn't working, systematically check common issues: blank screens, missing preview button, preview not updating, 404 errors, and environment variable issues. See `references/troubleshooting.md` for detailed diagnostic steps and solutions.
 
 ## Click-to-Edit Features
 
