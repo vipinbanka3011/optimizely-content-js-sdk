@@ -100,23 +100,19 @@ const COMMON_FRAGMENTS = [
 
 const COMMON_FIELDS = '..._IContent';
 
-const ASSET_METADATA_FRAGMENT =
-  'fragment AssetMetadata on _AssetItem { _assetMetadata { fileSize mimeType url } }';
+export function getBaseTypeFragments(baseType: string, contentTypeName?: string): BaseTypeFragments {
+  const prefix = contentTypeName && !isBaseType(contentTypeName) ? `${contentTypeName}__` : '';
 
-const IMAGE_METADATA_FRAGMENT =
-  'fragment ImageMetadata on _ImageItem { _imageMetadata { width height } }';
-
-export function getBaseTypeFragments(baseType: string): BaseTypeFragments {
   if (baseType === '_image') {
     return {
-      fields: [COMMON_FIELDS, '...AssetMetadata', '...ImageMetadata'],
-      extraFragments: [...COMMON_FRAGMENTS, ASSET_METADATA_FRAGMENT, IMAGE_METADATA_FRAGMENT],
+      fields: [COMMON_FIELDS, `${prefix}assetMetadata:_assetMetadata { fileSize mimeType url }`, `${prefix}imageMetadata:_imageMetadata { width height }`],
+      extraFragments: [...COMMON_FRAGMENTS],
     };
   }
   if (isBaseMediaType(baseType)) {
     return {
-      fields: [COMMON_FIELDS, '...AssetMetadata'],
-      extraFragments: [...COMMON_FRAGMENTS, ASSET_METADATA_FRAGMENT],
+      fields: [COMMON_FIELDS, `${prefix}assetMetadata:_assetMetadata { fileSize mimeType url }`],
+      extraFragments: [...COMMON_FRAGMENTS],
     };
   }
   return {

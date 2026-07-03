@@ -256,7 +256,7 @@ export const createFragment = (
 
     if (includeBaseFragments) {
       const baseType = 'baseType' in contentType ? (contentType as AnyContentType).baseType : undefined;
-      const baseFragments = getBaseTypeFragments(baseType ?? '');
+      const baseFragments = getBaseTypeFragments(baseType ?? '', contentTypeName);
       extraFragments.unshift(...baseFragments.extraFragments);
       fields.push(...baseFragments.fields);
     }
