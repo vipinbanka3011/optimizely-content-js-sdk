@@ -161,7 +161,16 @@ export async function processContentWithApplications(
     return;
   }
 
-  const contentRefMap = await checkContentFromConfig(contentArray, host);
+  // Collect entryPoint keys for missing apps
+  const missingAppEntryPoints = new Set(
+    applications
+      .filter(app => missingAppKeys?.has(app.key) && app.entryPoint && !app.entryPoint.startsWith('cms://'))
+      .map(app => app.entryPoint)
+  );
+
+  // Only check/create content for items NOT used as entryPoints by missing apps
+  const contentToCheck = contentArray.filter(c => !missingAppEntryPoints.has(c.key));
+  const contentRefMap = await checkContentFromConfig(contentToCheck, host);
 
   // Map content keys in entryPoint to full content refs
   for (const app of applications) {
