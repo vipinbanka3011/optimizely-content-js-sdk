@@ -68,3 +68,8 @@ export type {
   SectionContentType,
   SuppliedContractValues,
 } from './model/contentTypes.js';
+
+export type {
+  DisplayTemplate,
+  DisplayTemplateVariant,
+} from './model/displayTemplates.js';
