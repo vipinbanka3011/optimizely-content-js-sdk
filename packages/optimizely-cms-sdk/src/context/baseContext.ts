@@ -10,6 +10,8 @@ export interface ContextData {
   mode?: string;
   locale?: string;
   key?: string;
+  /** Mapped page-level data set by setPageContext(). Available via getPageData(). */
+  pageData?: Record<string, unknown>;
 }
 
 /**

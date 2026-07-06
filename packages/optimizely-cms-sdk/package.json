@@ -39,6 +39,11 @@
       "types": "./dist/cjs/model/buildConfig.d.ts",
       "import": "./dist/esm/model/buildConfig.js"
     },
+    "./next": {
+      "types": "./dist/cjs/next/metadata.d.ts",
+      "import": "./dist/esm/next/metadata.js",
+      "require": "./dist/cjs/next/metadata.js"
+    },
     "./telemetry": {
       "types": "./dist/cjs/telemetry/index.d.ts",
       "import": "./dist/esm/telemetry/index.js",

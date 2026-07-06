@@ -3,7 +3,10 @@ import {
   useState,
   useEffect,
   useRef,
+  createContext,
+  useContext,
   type ReactNode,
+  type ReactElement,
   type FunctionComponent,
   type PropsWithChildren,
 } from 'react';
@@ -50,6 +53,69 @@ export interface PreviewComponentProps {
    */
   children?: ReactNode;
 }
+
+// ---------------------------------------------------------------------------
+// Page Data Context
+// ---------------------------------------------------------------------------
+
+const PageDataContext = createContext<Record<string, unknown> | null>(null);
+
+export interface PageDataProviderProps {
+  /** Serializable page data returned by setPageContext() on the server. */
+  data: Record<string, unknown> | null;
+  children: ReactNode;
+}
+
+/**
+ * Provides page-level CMS data to all client components in the tree.
+ * Place this in your page route around <OptimizelyComponent />.
+ *
+ * @example
+ * ```tsx
+ * const pageData = setPageContext(content[0], pageContextConfig);
+ * return pageData ? (
+ *   <PageDataProvider data={pageData}>
+ *     <OptimizelyComponent content={content[0]} />
+ *   </PageDataProvider>
+ * ) : (
+ *   <OptimizelyComponent content={content[0]} />
+ * );
+ * ```
+ */
+export function PageDataProvider({ data, children }: PageDataProviderProps): ReactElement {
+  return (
+    <PageDataContext.Provider value={data}>
+      {children}
+    </PageDataContext.Provider>
+  );
+}
+
+/**
+ * Returns page-level data set by setPageContext() on the server.
+ * Returns null if page context is disabled or not configured.
+ *
+ * Must be used inside a <PageDataProvider>.
+ *
+ * @example
+ * ```tsx
+ * 'use client';
+ * import { usePageData } from '@optimizely/cms-sdk/react/client';
+ *
+ * export function ShareButton() {
+ *   const page = usePageData<{ title: string; url: string }>();
+ *   return <button onClick={() => navigator.share({ url: page?.url })}>{page?.title}</button>;
+ * }
+ * ```
+ */
+export function usePageData<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): T | null {
+  return useContext(PageDataContext) as T | null;
+}
+
+// ---------------------------------------------------------------------------
+// Preview Component
+// ---------------------------------------------------------------------------
 
 /**
  * Listens for Optimizely CMS content saved events and triggers navigation/refresh.

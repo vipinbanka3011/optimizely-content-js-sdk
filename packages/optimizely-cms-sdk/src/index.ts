@@ -45,6 +45,10 @@ export * as BuildConfig from './model/buildConfig.js';
 export * as DisplayTemplates from './model/displayTemplates.js';
 export * as Properties from './model/properties.js';
 
+// Page context — propagate page-level CMS data to components without prop drilling
+export { setPageContext, getPageData, defaultPageDataMapper } from './context/pageContext.js';
+export type { PageContextConfig, PageDataMapper } from './context/pageContext.js';
+
 // Type inference and asset utilities
 export { ContentProps } from './infer.js';
 
