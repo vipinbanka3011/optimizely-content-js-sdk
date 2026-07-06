@@ -37,7 +37,7 @@ function copyDir(src: string, dest: string): void {
 }
 
 function normalizeEnvFile(dir: string): void {
-  const candidates = ['.env.in', '.env.example', 'env.example'];
+  const candidates = ['.env.in', '.env.example', 'env.example', '.env.template'];
   for (const name of candidates) {
     const filePath = path.join(dir, name);
     if (fs.existsSync(filePath)) {
