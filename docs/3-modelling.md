@@ -505,6 +505,38 @@ const FeedPageContentType = contentType({
 
 This is particularly useful when you want to allow multiple content types that share common characteristics without listing each type individually.
 
+#### Contract Expansion in GraphQL Queries
+
+When generating GraphQL queries for properties that reference contracts in `allowedTypes`, you can control whether the SDK automatically includes all implementing content types using the `expandContracts` option:
+
+```ts
+import { createQuery } from '@optimizely/cms-sdk';
+
+// Without expansion (default behavior)
+const query = createQuery(FeedPageContentType);
+// Generates fragments ONLY for the PublishableContract interface
+
+// With expansion
+const query = createQuery(FeedPageContentType, {
+  expandContracts: true,
+});
+// Generates fragments for PublishableContract AND all implementing types (Article, News, etc.)
+```
+
+**When `expandContracts: false` (default):**
+
+- Only the contract interface is included in generated GraphQL fragments
+- Implementing types must be explicitly added to `allowedTypes` to be included
+- Results in smaller, more focused GraphQL queries
+- Best when you know exactly which types you need
+
+**When `expandContracts: true`:**
+
+- Automatically includes all content types that implement the contract
+- No need to manually list each implementing type
+- Generates larger GraphQL queries with fragments for every implementing type
+- Best when you want complete coverage of all types extending a contract
+
 ### Rendering Contract-Based Content
 
 When rendering content that implements a contract (e.g., in arrays of mixed types), use `<OptimizelyComponent>` to automatically resolve and render the correct component:
