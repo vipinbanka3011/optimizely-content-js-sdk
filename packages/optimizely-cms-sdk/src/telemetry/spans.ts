@@ -7,6 +7,7 @@ import type { PreviewParams, GraphReference } from '../graph/index.js';
 
 /**
  * Span for fragment generation at the root level.
+ * Only created when fragments are actually generated (not when cached).
  */
 export function startFragmentSpan(
   contentType: string,
@@ -27,6 +28,7 @@ export function startFragmentSpan(
 
 /**
  * Span for single content query generation.
+ * Only created when queries are actually generated (not when cached).
  */
 export function startSingleQuerySpan(contentType: string, damEnabled: boolean) {
   const tracer = getTracer();
@@ -41,6 +43,7 @@ export function startSingleQuerySpan(contentType: string, damEnabled: boolean) {
 
 /**
  * Span for multiple content query generation.
+ * Only created when queries are actually generated (not when cached).
  */
 export function startMultipleQuerySpan(contentType: string, damEnabled: boolean) {
   const tracer = getTracer();
