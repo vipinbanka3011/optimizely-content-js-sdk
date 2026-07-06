@@ -73,3 +73,7 @@ export type {
   DisplayTemplate,
   DisplayTemplateVariant,
 } from './model/displayTemplates.js';
+
+export { DictionaryService } from './services/dictionary/DictionaryService.js';
+export type { DictionaryConfig } from './services/dictionary/DictionaryService.js';
+export { extractLocaleFromUrl, getLocaleFromAcceptLanguage } from './services/dictionary/urlHelper.js';

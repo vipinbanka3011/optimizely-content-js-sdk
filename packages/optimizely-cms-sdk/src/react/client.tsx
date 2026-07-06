@@ -3,10 +3,13 @@ import {
   useState,
   useEffect,
   useRef,
+  createContext,
+  useContext,
   type ReactNode,
   type FunctionComponent,
   type PropsWithChildren,
 } from 'react';
+import { DictionaryService, type DictionaryConfig } from '../services/dictionary/DictionaryService.js';
 
 interface ContentSavedEvent {
   contentLink: string;
@@ -132,3 +135,101 @@ export const PreviewComponent: FunctionComponent<
 
   return showMask && children ? <>{children}</> : null;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DictionaryProvider — shares one DictionaryService instance across all client
+// components in the subtree via React Context.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Internal wrapper — a new object is created on every locale switch so React
+// context always sees a reference change and notifies all consumers.
+type DictionaryHandle = { instance: DictionaryService };
+const DictionaryContext = createContext<DictionaryHandle | null>(null);
+
+export interface DictionaryProviderProps {
+  /** App-level DictionaryConfig defining supported locales and their loaders. */
+  config: DictionaryConfig;
+  /**
+   * Active locale code (e.g. 'de-de').
+   *
+   * Supports two usage patterns:
+   *  - Per-page: place inside each page component. Provider remounts on every
+   *    navigation and always gets a fresh instance.
+   *  - In layout: place once in the root layout. When this prop changes (e.g.
+   *    user switches locale in-place), the existing service instance calls
+   *    setLocale() and a new context handle is published so all consumers
+   *    re-render with the updated translations.
+   */
+  locale: string;
+  children: ReactNode;
+}
+
+/**
+ * Initialises one DictionaryService instance for the given locale and shares
+ * it with all client-component children via context.
+ *
+ * The service instance is held in a ref and is never recreated on re-renders
+ * or locale switches — only one instance exists per mounted provider.
+ *
+ * When the locale prop changes the instance calls setLocale() internally.
+ * Once loading completes a new context handle object is published, which
+ * triggers a re-render in every consumer of useDictionary(). Old translations
+ * remain visible during the switch — there is no null/flash period.
+ *
+ * Usage (per-page — provider remounts on navigation):
+ *   <DictionaryProvider config={dictionaryConfig} locale={locale}>
+ *     <ClientNav />
+ *   </DictionaryProvider>
+ *
+ * Usage (in layout — provider persists, locale prop updates in-place):
+ *   // layout.tsx
+ *   <DictionaryProvider config={dictionaryConfig} locale={activeLocale}>
+ *     {children}
+ *   </DictionaryProvider>
+ */
+export function DictionaryProvider({ config, locale, children }: DictionaryProviderProps) {
+  const dictRef = useRef<DictionaryService | null>(null);
+  // A new wrapper object is created after every locale switch so React context
+  // detects a reference change and re-renders all consumers.
+  const [handle, setHandle] = useState<DictionaryHandle | null>(null);
+
+  useEffect(() => {
+    // Create the service once. Config is excluded from deps — it must be a
+    // stable module-level reference. To change config, remount with a new key.
+    if (!dictRef.current) {
+      dictRef.current = new DictionaryService(config);
+    }
+
+    dictRef.current.setLocale(locale).then(() => {
+      // Always produce a new wrapper object so the context value reference
+      // changes and every useDictionary() consumer re-renders — whether this
+      // provider is mounted per-page or persisted in a shared layout.
+      setHandle({ instance: dictRef.current! });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
+
+  return (
+    <DictionaryContext.Provider value={handle}>
+      {children}
+    </DictionaryContext.Provider>
+  );
+}
+
+/**
+ * Returns the shared DictionaryService instance for the current locale.
+ * Must be used inside a <DictionaryProvider>.
+ *
+ * Returns null until the first locale file has loaded. After the initial load
+ * it never returns null again — locale switches keep the old value visible
+ * until the new locale is ready.
+ *
+ * Usage:
+ *   import { useDictionary } from '@optimizely/cms-sdk/react/client';
+ *
+ *   const dict = useDictionary();
+ *   return <button>{dict?.t('actions.submit') ?? '...'}</button>;
+ */
+export function useDictionary(): DictionaryService | null {
+  return useContext(DictionaryContext)?.instance ?? null;
+}

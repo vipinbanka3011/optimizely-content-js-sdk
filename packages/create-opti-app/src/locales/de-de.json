@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "blog": "Blog",
+    "contact": "Kontakt"
+  },
+  "header": {
+    "welcome": "Willkommen zurück, {name}",
+    "logout": "Abmelden"
+  },
+  "actions": {
+    "submit": "Details einreichen",
+    "cancel": "Abbrechen",
+    "readMore": "Mehr lesen",
+    "learnMore": "Mehr erfahren",
+    "getStarted": "Jetzt starten"
+  },
+  "hero": {
+    "tagline": "Inhalte liefern, die überzeugen",
+    "cta": "Jetzt loslegen"
+  },
+  "errors": {
+    "notFound": "Seite nicht gefunden",
+    "generic": "Etwas ist schiefgelaufen"
+  }
+}

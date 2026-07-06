@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "blog": "博客",
+    "contact": "联系我们"
+  },
+  "header": {
+    "welcome": "欢迎回来，{name}",
+    "logout": "退出登录"
+  },
+  "actions": {
+    "submit": "提交详情",
+    "cancel": "取消",
+    "readMore": "阅读更多",
+    "learnMore": "了解更多",
+    "getStarted": "立即开始"
+  },
+  "hero": {
+    "tagline": "提供高转化率的内容",
+    "cta": "开始构建"
+  },
+  "errors": {
+    "notFound": "页面未找到",
+    "generic": "出了点问题"
+  }
+}

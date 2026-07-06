@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "blog": "Blog",
+    "contact": "Contacto"
+  },
+  "header": {
+    "welcome": "Bienvenido de vuelta, {name}",
+    "logout": "Cerrar sesión"
+  },
+  "actions": {
+    "submit": "Enviar detalles",
+    "cancel": "Cancelar",
+    "readMore": "Leer más",
+    "learnMore": "Saber más",
+    "getStarted": "Empezar ahora"
+  },
+  "hero": {
+    "tagline": "Entregue contenido que convierte",
+    "cta": "Comenzar a construir"
+  },
+  "errors": {
+    "notFound": "Página no encontrada",
+    "generic": "Algo salió mal"
+  }
+}

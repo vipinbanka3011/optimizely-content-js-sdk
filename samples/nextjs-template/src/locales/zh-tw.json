@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "首頁",
+    "about": "關於我們",
+    "blog": "部落格",
+    "contact": "聯絡我們"
+  },
+  "header": {
+    "welcome": "歡迎回來，{name}",
+    "logout": "登出"
+  },
+  "actions": {
+    "submit": "提交詳情",
+    "cancel": "取消",
+    "readMore": "閱讀更多",
+    "learnMore": "了解更多",
+    "getStarted": "立即開始"
+  },
+  "hero": {
+    "tagline": "提供高轉換率的內容",
+    "cta": "開始建置"
+  },
+  "errors": {
+    "notFound": "找不到頁面",
+    "generic": "發生了一些問題"
+  }
+}

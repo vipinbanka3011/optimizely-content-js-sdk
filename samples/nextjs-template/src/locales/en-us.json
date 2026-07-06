@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "header": {
+    "welcome": "Welcome back, {name}",
+    "logout": "Log Out"
+  },
+  "actions": {
+    "submit": "Submit Details",
+    "cancel": "Cancel",
+    "readMore": "Read More",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "tagline": "Deliver content that converts",
+    "cta": "Start Building"
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "generic": "Something went wrong"
+  }
+}

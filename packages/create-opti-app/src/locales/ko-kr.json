@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "홈",
+    "about": "소개",
+    "blog": "블로그",
+    "contact": "문의"
+  },
+  "header": {
+    "welcome": "돌아오셨군요, {name}",
+    "logout": "로그아웃"
+  },
+  "actions": {
+    "submit": "세부 정보 제출",
+    "cancel": "취소",
+    "readMore": "더 읽기",
+    "learnMore": "자세히 알아보기",
+    "getStarted": "지금 시작하기"
+  },
+  "hero": {
+    "tagline": "전환을 만드는 콘텐츠 제공",
+    "cta": "빌드 시작하기"
+  },
+  "errors": {
+    "notFound": "페이지를 찾을 수 없습니다",
+    "generic": "문제가 발생했습니다"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "会社概要",
+    "blog": "ブログ",
+    "contact": "お問い合わせ"
+  },
+  "header": {
+    "welcome": "おかえりなさい、{name}",
+    "logout": "ログアウト"
+  },
+  "actions": {
+    "submit": "詳細を送信",
+    "cancel": "キャンセル",
+    "readMore": "続きを読む",
+    "learnMore": "詳しく見る",
+    "getStarted": "今すぐ始める"
+  },
+  "hero": {
+    "tagline": "コンバージョンを生むコンテンツを届ける",
+    "cta": "構築を始める"
+  },
+  "errors": {
+    "notFound": "ページが見つかりません",
+    "generic": "問題が発生しました"
+  }
+}
