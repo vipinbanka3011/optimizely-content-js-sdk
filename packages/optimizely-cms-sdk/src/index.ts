@@ -45,6 +45,10 @@ export * as BuildConfig from './model/buildConfig.js';
 export * as DisplayTemplates from './model/displayTemplates.js';
 export * as Properties from './model/properties.js';
 
+// App settings — propagate CMS application-level settings to all components
+export { AppSettingsProvider, useAppSettings } from './react/client.js';
+export type { AppSettingsProviderProps } from './react/client.js';
+
 // Type inference and asset utilities
 export { ContentProps } from './infer.js';
 

@@ -32,6 +32,8 @@ import OfficeLocations, { OfficeContentType } from '@/components/OfficeLocations
 import Location, { LocationContentType } from '@/components/Location';
 import BlankExperience from '@/components/BlankExperience';
 import FAQ, { FAQContentType } from '@/components/FAQ';
+import { AppSettingsProvider } from '@optimizely/cms-sdk/react/client';
+import { getAppSettings } from '@/getAppSettings';
 
 config({
   apiKey: process.env.OPTIMIZELY_GRAPH_SINGLE_KEY || "your api key here",
@@ -109,14 +111,19 @@ const sansFont = Inter({
   subsets: ['latin'],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getAppSettings().catch(() => null);
   return (
     <html lang='en' className={[serifFont.variable, sansFont.variable].join(' ')}>
-      <body>{children}</body>
+      <body>
+        <AppSettingsProvider settings={settings}>
+          {children}
+        </AppSettingsProvider>
+      </body>
     </html>
   );
 }

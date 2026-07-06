@@ -3,10 +3,74 @@ import {
   useState,
   useEffect,
   useRef,
+  createContext,
+  useContext,
   type ReactNode,
+  type ReactElement,
   type FunctionComponent,
   type PropsWithChildren,
 } from 'react';
+
+// ---------------------------------------------------------------------------
+// App Settings Context
+// ---------------------------------------------------------------------------
+
+const AppSettingsContext = createContext<Record<string, unknown> | null>(null);
+
+export interface AppSettingsProviderProps {
+  /** Serializable settings object returned by getAppSettings(). */
+  settings: Record<string, unknown> | null;
+  children: ReactNode;
+}
+
+/**
+ * Provides application-level CMS settings to all client components in the tree.
+ * Place in the root layout so every page and component can access settings.
+ *
+ * @example
+ * ```tsx
+ * // app/layout.tsx
+ * import { AppSettingsProvider } from '@optimizely/cms-sdk/react/client';
+ * import { getAppSettings } from '@/getAppSettings';
+ *
+ * export default async function RootLayout({ children }) {
+ *   const settings = await getAppSettings().catch(() => null);
+ *   return (
+ *     <html><body>
+ *       <AppSettingsProvider settings={settings}>{children}</AppSettingsProvider>
+ *     </body></html>
+ *   );
+ * }
+ * ```
+ */
+export function AppSettingsProvider({ settings, children }: AppSettingsProviderProps): ReactElement {
+  return (
+    <AppSettingsContext.Provider value={settings}>
+      {children}
+    </AppSettingsContext.Provider>
+  );
+}
+
+/**
+ * Returns application-level CMS settings in any client component.
+ * Returns null if AppSettingsProvider is not in the tree or settings failed to load.
+ *
+ * @example
+ * ```tsx
+ * 'use client';
+ * import { useAppSettings } from '@optimizely/cms-sdk/react/client';
+ *
+ * export function Header() {
+ *   const settings = useAppSettings<{ siteName: string; logoUrl: string }>();
+ *   return <header><img src={settings?.logoUrl} alt={settings?.siteName} /></header>;
+ * }
+ * ```
+ */
+export function useAppSettings<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): T | null {
+  return useContext(AppSettingsContext) as T | null;
+}
 
 interface ContentSavedEvent {
   contentLink: string;
