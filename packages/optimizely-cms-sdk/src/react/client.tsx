@@ -1,8 +1,11 @@
 'use client';
 import {
+  createContext,
+  useContext,
   useState,
   useEffect,
   useRef,
+  type ReactElement,
   type ReactNode,
   type FunctionComponent,
   type PropsWithChildren,
@@ -132,3 +135,73 @@ export const PreviewComponent: FunctionComponent<
 
   return showMask && children ? <>{children}</> : null;
 };
+
+// ---------------------------------------------------------------------------
+// Page data context — feeds client components with page-level CMS data
+// ---------------------------------------------------------------------------
+
+/**
+ * React context that holds the page-level data populated by PageDataProvider.
+ * Internal — consume via usePageData().
+ */
+const PageDataContext = createContext<Record<string, unknown> | null>(null);
+
+export interface PageDataProviderProps {
+  /**
+   * Mapped page data produced by setPageContext() on the server.
+   * Must be a plain JSON-serializable object — no functions or class instances.
+   */
+  data: Record<string, unknown>;
+  children: ReactNode;
+}
+
+/**
+ * Wrap page content with this provider so that any client component in the
+ * tree can access page-level data via usePageData() without prop drilling.
+ *
+ * Place this in the page (not the layout) so the data always refreshes on
+ * navigation. For layout-level usage see the layout pattern in the docs.
+ *
+ * @example
+ * ```tsx
+ * // app/[...slug]/page.tsx  (server component)
+ * const pageData = setPageContext(content[0], pageContextConfig);
+ * return pageData ? (
+ *   <PageDataProvider data={pageData}>
+ *     <OptimizelyComponent content={content[0]} />
+ *   </PageDataProvider>
+ * ) : (
+ *   <OptimizelyComponent content={content[0]} />
+ * );
+ * ```
+ */
+export function PageDataProvider({ data, children }: PageDataProviderProps): ReactElement {
+  return (
+    <PageDataContext.Provider value={data}>
+      {children}
+    </PageDataContext.Provider>
+  );
+}
+
+/**
+ * Read page-level data in any client component inside a PageDataProvider.
+ *
+ * Returns null when no provider is present (feature disabled or component
+ * rendered outside a page context — handle this gracefully).
+ *
+ * @example
+ * ```tsx
+ * 'use client';
+ * import { usePageData } from '@optimizely/cms-sdk/react/client';
+ *
+ * export function ShareButton() {
+ *   const page = usePageData<{ title: string; url: string }>();
+ *   return <button onClick={() => navigator.share({ url: page?.url })}>{page?.title}</button>;
+ * }
+ * ```
+ */
+export function usePageData<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): T | null {
+  return useContext(PageDataContext) as T | null;
+}

@@ -73,3 +73,7 @@ export type {
   DisplayTemplate,
   DisplayTemplateVariant,
 } from './model/displayTemplates.js';
+
+// Page context — propagate page-level CMS data to any component (SSR + CSR)
+export { setPageContext, getPageData, defaultPageDataMapper } from './context/pageContext.js';
+export type { PageContextConfig, PageDataMapper } from './context/pageContext.js';

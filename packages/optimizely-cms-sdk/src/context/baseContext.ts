@@ -10,6 +10,13 @@ export interface ContextData {
   mode?: string;
   locale?: string;
   key?: string;
+  /**
+   * Mapped page-level data made available to all server components via getPageData().
+   * Populated by setPageContext() at the page level.
+   * Contains only what the app's PageContextConfig.mapper chose to expose —
+   * never the full content tree unless explicitly configured that way.
+   */
+  pageData?: Record<string, unknown>;
 }
 
 /**
