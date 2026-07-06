@@ -225,8 +225,8 @@ export default class ConfigPull extends BaseCommand<typeof ConfigPull> {
 
     this.logManifestStats(manifest, spinner);
     const fileName = hasProvidedFilename ? basename(resolvedOutput) : 'manifest.ts';
-    const displayLocation = hasProvidedFilename ? providedOutput : `in ${providedOutput}`;
-    spinner.succeed(` Generated ${fileName} file ${displayLocation}`);
+    const displayLocation = hasProvidedFilename ?  dirname(providedOutput) : providedOutput;
+    spinner.succeed(` Generated ${fileName} file in ${displayLocation}`);
   }
 
   private async handleIndividualOutput(
@@ -297,10 +297,25 @@ export default class ConfigPull extends BaseCommand<typeof ConfigPull> {
     // Warn only after json output, to avoid crowding sdtout
     this.warnAboutReadOnly(includeReadOnly);
 
+    // Prompt for output directory if not provided
+    const providedOutput =
+      flags.output ||
+      (isInteractive ?
+        await input({
+          message: 'Where should the generated file(s) be saved?',
+          default: defaultOutput,
+        })
+      : defaultOutput);
+    const resolvedOutput = resolve(process.cwd(), providedOutput);
+
+    // Check if user provided a file path (ends with .ts or .tsx)
+    const isForcedSingleFileMode = /\.tsx?$/.test(providedOutput);
+
     const outputType =
       flags['single-file'] ? 'single-file'
       : flags.individual ? 'individual'
       : flags.group ? 'group'
+      : isForcedSingleFileMode ? 'single-file'
       : isInteractive ?
         await select({
           message: 'How would you like to organize the output?',
@@ -316,19 +331,6 @@ export default class ConfigPull extends BaseCommand<typeof ConfigPull> {
         })
       : 'group';
 
-    // Prompt for output directory if not provided
-    const providedOutput =
-      flags.output ||
-      (isInteractive ?
-        await input({
-          message: 'Where should the generated file(s) be saved?',
-          default: defaultOutput,
-        })
-      : defaultOutput);
-    const resolvedOutput = resolve(process.cwd(), providedOutput);
-
-    // Check if user provided a file path (ends with .ts or .tsx)
-    const isForcedSingleFileMode = /\.tsx?$/.test(providedOutput);
     const actualOutputType = isForcedSingleFileMode ? 'single-file' : outputType;
 
     // Warn if conflicting flags are present
