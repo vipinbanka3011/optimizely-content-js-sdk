@@ -85,6 +85,8 @@ The application creation operates on the following order with explicit dependenc
 
 The CLI enforces this dependency chain during `config push`: contentTypes must exist before content instances can reference them, and content instances must exist before applications can designate them as entry points.
 
+> Note: The programmatic (config-based) approach does not currently support updating applications. To update an application, you must first delete the existing application and its start page content from the CMS, then run the push command again.
+
 ## Step 3. Change the "home" URL
 
 1. Go to your CMS &rarr; Content &rarr; Home

@@ -258,7 +258,31 @@ For `type: 'component'` properties, access the nested data directly:
 ```
 
 **7. Experience Types with Composition**
-Experiences need OptimizelyComposition to render the visual builder nodes:
+Experiences need OptimizelyComposition to render the visual builder nodes. Preview attributes are automatically applied to components:
+
+```tsx
+import { 
+  OptimizelyComposition,
+  getPreviewUtils 
+} from '@optimizely/cms-sdk/react/server';
+
+export default function MyExperience({ content }: Props) {
+  const { pa } = getPreviewUtils(content);
+  
+  return (
+    <main>
+      {/* Your content properties */}
+      <h1 {...pa('title')}>{content.title}</h1>
+      
+      {/* Visual builder composition - preview attributes auto-applied */}
+      <OptimizelyComposition nodes={content.composition.nodes ?? []} />
+    </main>
+  );
+}
+```
+
+**Optional: Custom Component Wrapper**
+Only provide `ComponentWrapper` when you need custom layouts or styling for composition components:
 
 ```tsx
 import { 
@@ -269,18 +293,12 @@ import {
 
 function ComponentWrapper({ children, node }: ComponentContainerProps) {
   const { pa } = getPreviewUtils(node);
-  return <div {...pa(node)}>{children}</div>;
+  return <div className="custom-layout" {...pa(node)}>{children}</div>;
 }
 
 export default function MyExperience({ content }: Props) {
-  const { pa } = getPreviewUtils(content);
-  
   return (
     <main>
-      {/* Your content properties */}
-      <h1 {...pa('title')}>{content.title}</h1>
-      
-      {/* Visual builder composition */}
       <OptimizelyComposition 
         nodes={content.composition.nodes ?? []} 
         ComponentWrapper={ComponentWrapper} 

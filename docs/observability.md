@@ -1,6 +1,6 @@
 # Observability with OpenTelemetry
 
-The Optimizely CMS SDK includes built-in OpenTelemetry instrumentation for comprehensive observability in production applications.
+The Optimizely CMS SDK includes built-in OpenTelemetry instrumentation for production observability.
 
 ## Overview
 
@@ -98,6 +98,7 @@ await client.getContentByPath('/');
 **Span: `optimizely.query.create`**
 
 - Generates GraphQL queries for single or multiple content items
+- **Conditional presence**: Span is ONLY created when queries are actually generated, not when cached queries are reused
 - Attributes:
   - `optimizely.query.type` - "single" or "multiple"
   - `optimizely.content_type` - Content type being queried
@@ -108,6 +109,7 @@ await client.getContentByPath('/');
 **Span: `optimizely.fragment.create`**
 
 - Generates GraphQL fragments for content types
+- **Conditional presence**: Span is ONLY created when fragments are actually generated, not when cached fragments are reused
 - Attributes:
   - `optimizely.content_type` - Content type name
   - `optimizely.dam.enabled` - Whether DAM is enabled
@@ -259,6 +261,44 @@ metrics.httpRequestCount.add(1, {
   'http.status_code': 200,
 });
 ```
+
+## Conditional Span Presence (Cache-Aware Telemetry)
+
+The SDK uses **conditional span presence** for query and fragment generation operations. This means:
+
+- **When cached**: No `optimizely.query.create` or `optimizely.fragment.create` spans are emitted
+- **When generated**: Spans are created with full timing and attributes
+
+### Why Conditional Spans?
+
+This design choice prioritizes:
+
+1. **Lower telemetry volume**: ~95% fewer spans in production (typical cache hit rate)
+2. **Lower cost**: Reduced ingestion and storage costs for users
+3. **Accurate representation**: Spans represent actual CPU work only
+4. **Performance**: Zero telemetry overhead for cached operations
+
+### Trade-offs
+
+**Benefits**:
+
+- Dramatically reduced span volume and cost
+- Telemetry accurately reflects computational work
+- No performance impact on cache hits
+
+**Considerations**:
+
+- Trace structure varies between cache hits and misses
+- Cannot track cache hit rate via these spans alone
+- Metric counters (`optimizely.query.generation.count`, `optimizely.fragment.generation.count`) also only increment on generation, not on cache hits
+
+### Alternative Patterns
+
+If you need to track cache hit rates or prefer consistent trace structure, consider:
+
+1. **Custom cache instrumentation**: Wrap cache calls with your own spans that include `cache.hit` attributes
+2. **Metric-based tracking**: Use custom metrics to track cache get/set operations
+3. **Application-level spans**: Add spans at the API route level that always appear regardless of caching
 
 ## Troubleshooting
 

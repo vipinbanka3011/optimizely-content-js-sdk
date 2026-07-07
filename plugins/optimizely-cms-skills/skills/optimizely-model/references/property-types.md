@@ -1,6 +1,6 @@
 # Property Types Reference
 
-This reference provides comprehensive details on all available property types for Optimizely CMS content type modeling.
+Complete reference for all available property types in Optimizely CMS content type modeling.
 
 ## Available Property Types
 

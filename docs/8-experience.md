@@ -40,7 +40,6 @@ To render an experience, you'll use the `OptimizelyComposition` component, which
 
 ```tsx
 import {
-  ComponentContainerProps,
   getPreviewUtils,
   OptimizelyComponent,
   OptimizelyComposition,
@@ -49,11 +48,6 @@ import {
 type Props = {
   content: ContentProps<typeof AboutExperienceContentType>;
 };
-
-function ComponentWrapper({ children, node }: ComponentContainerProps) {
-  const { pa } = getPreviewUtils(node);
-  return <div {...pa(node)}>{children}</div>;
-}
 
 export default function AboutExperience({ content }: Props) {
   const { pa } = getPreviewUtils(content);
@@ -71,10 +65,7 @@ export default function AboutExperience({ content }: Props) {
         </div>
       )}
 
-      <OptimizelyComposition
-        nodes={content.composition.nodes ?? []}
-        ComponentWrapper={ComponentWrapper}
-      />
+      <OptimizelyComposition nodes={content.composition.nodes ?? []} />
     </main>
   );
 }
@@ -86,10 +77,7 @@ export default function AboutExperience({ content }: Props) {
 Every experience has a `composition` property that contains the visual layout structure. The `nodes` array represents all the sections and elements that editors have added to the experience.
 
 **`<OptimizelyComposition/>`**  
-This component recursively renders the entire composition structure, handling both structural nodes (rows, columns) and component nodes (your custom components).
-
-**`<ComponentWrapper/>`**  
-A wrapper function that wraps each component in the composition. This is where you add preview attributes using `pa(node)` to enable on-page editing in preview mode.
+This component recursively renders the entire composition structure, handling both structural nodes (rows, columns) and component nodes (your custom components). Components are automatically wrapped with preview attributes to enable on-page editing in preview mode. You can optionally provide a `ComponentWrapper` prop for custom layouts or styling (see [Customizing Component Rendering](#customizing-component-rendering)).
 
 ## Using the Built-in BlankExperience
 
@@ -98,7 +86,6 @@ The SDK provides `BlankExperienceContentType`, a ready-to-use experience type wi
 ```tsx
 import { BlankExperienceContentType, ContentProps } from '@optimizely/cms-sdk';
 import {
-  ComponentContainerProps,
   OptimizelyComposition,
   getPreviewUtils,
 } from '@optimizely/cms-sdk/react/server';
@@ -107,14 +94,42 @@ type Props = {
   content: ContentProps<typeof BlankExperienceContentType>;
 };
 
-function ComponentWrapper({ children, node }: ComponentContainerProps) {
-  const { pa } = getPreviewUtils(node);
-  return <div {...pa(node)}>{children}</div>;
-}
-
 export default function BlankExperience({ content }: Props) {
   return (
     <main className="blank-experience">
+      <OptimizelyComposition nodes={content.composition.nodes ?? []} />
+    </main>
+  );
+}
+```
+
+Since `BlankExperienceContentType` has no custom properties, the entire page layout is managed through the visual composition interface. This gives editors maximum flexibility. Components are automatically wrapped with preview attributes.
+
+**Note:** The experience uses the outline layout type, meaning sections and section-enabled components are arranged as a flat, ordered list in the Visual Builder.
+
+## Customizing Component Rendering
+
+By default, `OptimizelyComposition` automatically wraps each component with preview attributes. However, you can provide a custom `ComponentWrapper` when you need custom layouts or styling:
+
+```tsx
+import {
+  ComponentContainerProps,
+  OptimizelyComposition,
+  getPreviewUtils,
+} from '@optimizely/cms-sdk/react/server';
+
+function ComponentWrapper({ children, node }: ComponentContainerProps) {
+  const { pa } = getPreviewUtils(node);
+  return (
+    <div className="custom-layout" {...pa(node)}>
+      {children}
+    </div>
+  );
+}
+
+export default function AboutExperience({ content }: Props) {
+  return (
+    <main>
       <OptimizelyComposition
         nodes={content.composition.nodes ?? []}
         ComponentWrapper={ComponentWrapper}
@@ -124,9 +139,16 @@ export default function BlankExperience({ content }: Props) {
 }
 ```
 
-Since `BlankExperienceContentType` has no custom properties, the entire page layout is managed through the visual composition interface. This gives editors maximum flexibility.
+**When to use `ComponentWrapper`:**
 
-**Note:** The experience uses the outline layout type, meaning sections and section-enabled components are arranged as a flat, ordered list in the Visual Builder.
+- Adding custom CSS classes or styles to composition components
+- Implementing custom grid systems or layout logic
+- Wrapping components with additional container elements
+
+**When NOT to use `ComponentWrapper`:**
+
+- Default rendering (preview attributes are automatically applied)
+- Simple experiences without custom styling needs
 
 ## Working with Sections
 
@@ -325,19 +347,6 @@ initReactComponentRegistry({
 ```
 
 ## Best Practices
-
-### Provide Default Wrappers
-
-Always provide a `ComponentWrapper` to ensure proper preview attribute handling:
-
-```tsx
-function ComponentWrapper({ children, node }: ComponentContainerProps) {
-  const { pa } = getPreviewUtils(node);
-  return <div {...pa(node)}>{children}</div>;
-}
-```
-
-This enables on-page editing in preview mode, allowing editors to click components and jump to the corresponding CMS field.
 
 ### Mixing Static and Composed Content
 

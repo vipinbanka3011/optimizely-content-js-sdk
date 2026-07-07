@@ -110,6 +110,37 @@ properties: {
 
 Both `minimum` and `maximum` accept ISO date-time strings.
 
+#### RichText Property
+
+For formatted content with rich text editing. Supports optional `editorSettings` to customize the TinyMCE toolbar:
+
+```ts
+properties: {
+  body: {
+    type: 'richText',
+    displayName: 'Article Body',
+    description: 'Main content with rich text formatting',
+  },
+  summary: {
+    type: 'richText',
+    displayName: 'Summary',
+    editorSettings: {
+      preset: 'minimal', // Options: 'minimal' | 'standard' | 'expanded'
+    },
+  },
+}
+```
+
+**Editor Presets:**
+
+- **`minimal`** - Basic formatting only (bold, italic, links, lists)
+- **`standard`** - Common formatting options (default if not specified)
+- **`expanded`** - Full TinyMCE toolbar with advanced features (tables, media, code)
+
+Use `minimal` for short formatted text fields like summaries or introductions. Use `expanded` for complex content requiring tables, embedded media, or custom HTML.
+
+**Rendering:** Use the `<RichText>` component from `@optimizely/cms-sdk/react/richText` to render rich text content. See [RichText Component](./10-richtext-component-react.md) for details.
+
 #### Array Property
 
 For storing lists of values. The `items` field defines what type each array element should be:
@@ -428,7 +459,6 @@ const MyContentType = contentType({
 // - description: "Description" (from Contract1)
 ```
 
-
 #### Using Contracts in Content Relationships
 
 Contracts can be used in `allowedTypes` and `restrictedTypes` to allow or restrict all content types that extend a specific contract:
@@ -474,6 +504,81 @@ const FeedPageContentType = contentType({
 ```
 
 This is particularly useful when you want to allow multiple content types that share common characteristics without listing each type individually.
+
+#### Contract Expansion in GraphQL Queries
+
+When generating GraphQL queries for properties that reference contracts in `allowedTypes`, you can control whether the SDK automatically includes all implementing content types using the `expandContracts` option:
+
+```ts
+import { createQuery } from '@optimizely/cms-sdk';
+
+// Without expansion (default behavior)
+const query = createQuery(FeedPageContentType);
+// Generates fragments ONLY for the PublishableContract interface
+
+// With expansion
+const query = createQuery(FeedPageContentType, {
+  expandContracts: true,
+});
+// Generates fragments for PublishableContract AND all implementing types (Article, News, etc.)
+```
+
+**When `expandContracts: false` (default):**
+
+- Only the contract interface is included in generated GraphQL fragments
+- Implementing types must be explicitly added to `allowedTypes` to be included
+- Results in smaller, more focused GraphQL queries
+- Best when you know exactly which types you need
+
+**When `expandContracts: true`:**
+
+- Automatically includes all content types that implement the contract
+- No need to manually list each implementing type
+- Generates larger GraphQL queries with fragments for every implementing type
+- Best when you want complete coverage of all types extending a contract
+
+### Rendering Contract-Based Content
+
+When rendering content that implements a contract (e.g., in arrays of mixed types), use `<OptimizelyComponent>` to automatically resolve and render the correct component:
+
+```tsx
+import { OptimizelyComponent } from '@optimizely/cms-sdk/react/server';
+
+function FeedPage({ content }) {
+  return (
+    <div>
+      {content.featuredItems?.map((item, index) => (
+        <OptimizelyComponent key={index} content={item} />
+      ))}
+    </div>
+  );
+}
+```
+
+`OptimizelyComponent` inspects each content item's type and renders the registered component. If `featuredItems` allows `[PublishableContract]`, it renders any content type extending that contract (`ArticleContentType`, `NewsContentType`, etc.) using their respective components.
+
+**Using the `tag` parameter:** Override component lookup to render alternate versions of the same content type:
+
+```tsx
+<OptimizelyComponent content={item} tag="card" />
+```
+
+The `tag` parameter forces component lookup by tag instead of typename. Register tagged variants in your component registry:
+
+```tsx
+initReactComponentRegistry({
+  resolver: {
+    Article: ArticlePage,       // Default full-page renderer
+    'Article:card': ArticleCard, // Compact card view for lists
+    News: NewsPage,
+    'News:card': NewsCard,
+  },
+});
+```
+
+When `tag="card"` is passed, the component registry looks for `Article:card` first, falling back to `Article` if not found. Use this for card/list views, simplified teasers, or context-specific rendering of the same content type.
+
+For details on component registration and rendering, see [Rendering](./6-rendering-react.md).
 
 ## Step 2. Sync content types to the CMS
 

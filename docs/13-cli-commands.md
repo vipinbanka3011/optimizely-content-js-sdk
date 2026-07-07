@@ -87,9 +87,11 @@ In interactive mode (terminal), prompts for output directory and grouping prefer
 
 **Flags:**
 
-- `--output <path>` - Output directory for generated files
-- `--group` - Group files by base type (page/, component/, section/, etc.)
-- `--json` - Output manifest as JSON to stdout (useful for piping)
+- `--output <path>` - Output directory for generated files (or path to output file for single-file mode)
+- `--single-file` / `-s` - Produce single file containing all types
+- `--individual` / `-i` - Write each type to a separate file
+- `--group` / `-g` - Group files by base type (page/, component/, section/, etc.)
+- `--json` / `-j` - Output manifest as JSON to stdout (useful for piping)
 - `--include-read-only` - Include read-only system content types
 - `--host <url>` - Override CMS host URL
 
@@ -102,8 +104,17 @@ optimizely-cms-cli config pull
 # Specify output directory
 optimizely-cms-cli config pull --output ./src/content-types
 
+# Single file with all types (default filename: manifest.ts)
+optimizely-cms-cli config pull --single-file --output ./src/types
+
+# Single file with custom filename (auto-detects .ts/.tsx extension)
+optimizely-cms-cli config pull --output ./src/types/all-content-types.ts
+
+# Individual files (one per content type)
+optimizely-cms-cli config pull --individual --output ./src/types
+
 # Group by base type and specify output
-optimizely-cms-cli config pull --output ./src/types --group
+optimizely-cms-cli config pull --group --output ./src/types
 
 # Output as JSON
 optimizely-cms-cli config pull --json
@@ -112,8 +123,8 @@ optimizely-cms-cli config pull --json
 optimizely-cms-cli config pull > manifest.json
 
 # Pipe to other commands
-optimizely-cms-cli config pull | jq .contentTypes
-optimizely-cms-cli config pull | grep -i "Article"
+optimizely-cms-cli config pull --json | jq .contentTypes
+optimizely-cms-cli config pull --json | grep -i "Article"
 
 # Include read-only system content types
 optimizely-cms-cli config pull --include-read-only
@@ -124,7 +135,13 @@ optimizely-cms-cli config pull --output ./src/types --group --include-read-only
 
 **Output structure:**
 
-Without `--group`:
+With `--single-file` (or when `--output` ends with `.ts`/`.tsx`):
+```
+src/types/
+└── manifest.ts  # All content types in one file
+```
+
+With `--individual`:
 ```
 src/content-types/
 ├── ArticlePage.ts
@@ -135,7 +152,7 @@ src/content-types/
     └── HeroDisplayTemplate.ts
 ```
 
-With `--group`:
+With `--group` (default):
 ```
 src/types/
 ├── page/
